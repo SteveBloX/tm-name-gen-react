@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/tm-name-gen-react/static/css/main.406858c5.css",
+    "main.js": "/tm-name-gen-react/static/js/main.fae3976b.js",
+    "static/js/453.264a8380.chunk.js": "/tm-name-gen-react/static/js/453.264a8380.chunk.js",
+    "index.html": "/tm-name-gen-react/index.html",
+    "main.406858c5.css.map": "/tm-name-gen-react/static/css/main.406858c5.css.map",
+    "main.fae3976b.js.map": "/tm-name-gen-react/static/js/main.fae3976b.js.map",
+    "453.264a8380.chunk.js.map": "/tm-name-gen-react/static/js/453.264a8380.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.406858c5.css",
+    "static/js/main.fae3976b.js"
+  ]
+}
