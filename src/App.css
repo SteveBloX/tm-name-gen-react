@@ -30,3 +30,19 @@ body {
   width: 100%;
   transition: .5s all;
 }
+
+.expandGradientButton {
+  position: fixed;
+  bottom: .8rem;
+  left: .4rem;
+  transition: .5s all;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100vw;
+}

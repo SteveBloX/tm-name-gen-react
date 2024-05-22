@@ -3,18 +3,24 @@ import "./App.css";
 import {
   Button,
   Checkbox,
+  ConfigProvider,
   Divider,
   FloatButton,
   Input,
   message,
   Popconfirm,
   Space,
+  theme,
 } from "antd";
 import { generateGradient, shortenHex } from "./colors";
 import HorizontalColorPicker from "./components/horizontalColorPicker";
 import {
+  CaretDownFilled,
+  CaretUpFilled,
   CopyFilled,
   DeleteFilled,
+  MoonFilled,
+  MoonOutlined,
   PlusCircleFilled,
   SaveFilled,
 } from "@ant-design/icons";
@@ -149,161 +155,221 @@ function App() {
     );
   });*/
 
+  const [expandedGradientPreview, setExpandedGradientPreview] =
+    React.useState<boolean>(false);
+  const [darkMode, setDarkMode] = React.useState<boolean>(
+    localStorage.getItem("darkMode") === "true"
+  );
+
+  function toggleDarkMode() {
+    setDarkMode(!darkMode);
+    localStorage.setItem("darkMode", (!darkMode).toString());
+  }
   return (
-    <div className="main-card">
-      {contextHolder}
-      <h1 className="text-xl font-bold mb-5">Trackmania Nickname Generator</h1>
-      <p className="text-gray-500 text-sm mb-0.5">Nickname</p>
-      <Input
-        status={username.length < 2 ? "error" : ""}
-        placeholder="meow"
-        count={{
-          show: true,
-        }}
-        onChange={(e) => setUsername(e.target.value)}
-        value={username}
-      />
-      <Divider plain>Colors</Divider>
-      <div className="mb-1 flex justify-between">
-        <HorizontalColorPicker
-          showText={() => "Start color"}
-          value={startColor}
-          onChange={(c) => setStartColor(c.toHex())}
-          disabledAlpha
-        />
-        <HorizontalColorPicker
-          showText={() => "Middle color"}
-          value={middleColor}
-          onChange={(c) => setMiddleColor(c.toHex())}
-          disabledAlpha
-          disabled={!middleColorEnabled}
-        />
-        <HorizontalColorPicker
-          showText={() => "End color"}
-          value={endColor}
-          onChange={(c) => setEndColor(c.toHex())}
-          disabledAlpha
-        />
-      </div>
-      <Checkbox
-        onChange={(e) => setMiddleColorEnabled(e.target.checked)}
-        checked={middleColorEnabled}
-      >
-        Enable middle color
-      </Checkbox>
-      <Divider plain>Result</Divider>
-      <p className="text-lg">Preview</p>
-      <div className="font-bold mb-3">
-        {gradient
-          .slice(0, username ? username.length : defaultUsername.length)
-          .map((color, i) => (
-            <span style={{ color }} key={i}>
-              {username ? username[i] : defaultUsername[i]}
-            </span>
-          ))}
-      </div>
-      <p className="text-lg mb-1">Trackmania Code</p>
-      <Space.Compact>
-        <Input
-          readOnly
-          value={tmCode}
-          ref={tmCodeRef}
-          // select all text on focus
-          onFocus={(e) =>
-            tmCodeRef.current.focus({
-              cursor: "all",
-            })
-          }
-        />
-        <Button
-          type="primary"
-          onClick={() => {
-            navigator.clipboard
-              .writeText(tmCode)
-              .then(() => messageApi.success("Copied to clipboard"));
-          }}
-        >
-          <TextWithIcon text="Copy" icon={<CopyFilled />} reverse={false} />
-        </Button>
-      </Space.Compact>
-      <Divider plain>Storage</Divider>
-      <Button type="dashed" onClick={save} className="mr-3">
-        <TextWithIcon
-          text={storageNanoid ? "Update" : "Save"}
-          icon={<SaveFilled />}
-          reverse={true}
-        />
-      </Button>
-      {storageNanoid && (
-        <>
-          <Popconfirm
-            title="Delete nickname?"
-            onConfirm={() => {
-              localStorage.removeItem(storageNanoid);
-              setStorageNanoid("");
+    <ConfigProvider
+      theme={{
+        algorithm: darkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
+      }}
+    >
+      <div className={`app ${darkMode && "dark"} dark:bg-[#121212]`}>
+        <div className="main-card dark:bg-[#212121]">
+          {contextHolder}
+          <h1 className="text-xl font-bold mb-5 dark:text-light">
+            Trackmania Nickname Generator
+          </h1>
+          <p className="text-gray-500 text-sm mb-0.5 dark:text-light">
+            Nickname
+          </p>
+          <Input
+            status={username.length === 0 ? "error" : ""}
+            placeholder="meow"
+            count={{
+              show: true,
             }}
-            description={
-              <p>
-                Are you sure you want to delete nickname{" "}
-                <GradientUsername username={username} gradient={gradient} />{" "}
-                from storage?
-              </p>
-            }
-            okText="Yes"
-            cancelText="No"
+            onChange={(e) => setUsername(e.target.value)}
+            value={username}
+          />
+          <Divider plain>Colors</Divider>
+          <div className="mb-1 flex justify-between">
+            <HorizontalColorPicker
+              showText={() => "Start color"}
+              value={startColor}
+              onChange={(c) => setStartColor(c.toHex())}
+              disabledAlpha
+            />
+            <HorizontalColorPicker
+              showText={() => "Middle color"}
+              value={middleColor}
+              onChange={(c) => setMiddleColor(c.toHex())}
+              disabledAlpha
+              disabled={!middleColorEnabled}
+            />
+            <HorizontalColorPicker
+              showText={() => "End color"}
+              value={endColor}
+              onChange={(c) => setEndColor(c.toHex())}
+              disabledAlpha
+            />
+          </div>
+          <Checkbox
+            onChange={(e) => setMiddleColorEnabled(e.target.checked)}
+            checked={middleColorEnabled}
           >
-            <Button type="dashed" className="mr-3" danger>
-              <TextWithIcon text="Delete" icon={<DeleteFilled />} />
+            Enable middle color
+          </Checkbox>
+          <Divider plain>Result</Divider>
+          <p className="text-lg dark:text-light">Preview</p>
+          <div className="font-bold mb-3">
+            {gradient
+              .slice(0, username ? username.length : defaultUsername.length)
+              .map((color, i) => (
+                <span style={{ color }} key={i}>
+                  {username ? username[i] : defaultUsername[i]}
+                </span>
+              ))}
+          </div>
+          <p className="text-lg mb-1 dark:text-light">Trackmania Code</p>
+          <Space.Compact>
+            <Input
+              readOnly
+              value={tmCode}
+              ref={tmCodeRef}
+              // select all text on focus
+              onFocus={(e) =>
+                tmCodeRef.current.focus({
+                  cursor: "all",
+                })
+              }
+            />
+            <Button
+              type="primary"
+              onClick={() => {
+                navigator.clipboard
+                  .writeText(tmCode)
+                  .then(() => messageApi.success("Copied to clipboard"));
+              }}
+            >
+              <TextWithIcon text="Copy" icon={<CopyFilled />} reverse={false} />
             </Button>
-          </Popconfirm>
+          </Space.Compact>
+          <Divider plain>Storage</Divider>
+          <Button type="dashed" onClick={save} className="mr-3">
+            <TextWithIcon
+              text={storageNanoid ? "Update" : "Save"}
+              icon={<SaveFilled />}
+              reverse={true}
+            />
+          </Button>
+          {storageNanoid && (
+            <>
+              <Popconfirm
+                title="Delete nickname?"
+                onConfirm={() => {
+                  localStorage.removeItem(storageNanoid);
+                  setStorageNanoid("");
+                }}
+                description={
+                  <p>
+                    Are you sure you want to delete nickname{" "}
+                    <GradientUsername username={username} gradient={gradient} />{" "}
+                    from storage?
+                  </p>
+                }
+                okText="Yes"
+                cancelText="No"
+              >
+                <Button type="dashed" className="mr-3" danger>
+                  <TextWithIcon text="Delete" icon={<DeleteFilled />} />
+                </Button>
+              </Popconfirm>
+              <Button
+                type="dashed"
+                onClick={() => {
+                  // reload page
+                  window.location.reload();
+                }}
+              >
+                <TextWithIcon text="New" icon={<PlusCircleFilled />} />
+              </Button>
+            </>
+          )}
+          <div className="gradientBar mt-5">
+            <div
+              className="gradient h-2"
+              style={{
+                background: `linear-gradient(to right, ${gradient.join(", ")})`,
+                ...(expandedGradientPreview ? { height: "8rem" } : {}),
+              }}
+            ></div>
+          </div>
+          <FloatButton.Group shape="square">
+            <FloatButton
+              icon={darkMode ? <MoonOutlined /> : <MoonFilled />}
+              onClick={toggleDarkMode}
+            />
+            <FloatButton
+              onClick={() => setStorageDrawerVisible(true)}
+              icon={<SaveFilled />}
+            />
+          </FloatButton.Group>
+
+          <SavedUsernamesDrawer
+            open={storageDrawerVisible}
+            setOpen={setStorageDrawerVisible}
+            onLoad={(id) => {
+              const {
+                username,
+                startColor,
+                middleColor,
+                middleColorEnabled,
+                endColor,
+              } = JSON.parse(localStorage.getItem(id) || "{}");
+              setMiddleColorEnabled(middleColorEnabled);
+              setMiddleColor(middleColor);
+              setStartColor(startColor);
+              setEndColor(endColor);
+              setUsername(username);
+              setStorageNanoid(id);
+              setStorageDrawerVisible(false);
+            }}
+            messageApi={messageApi}
+            onDelete_={(id) => {
+              if (id === storageNanoid) {
+                setStorageNanoid("");
+              }
+            }}
+          />
+          <p className="text-sm text-gray-500 italic dark:text-light">
+            Made with React by{" "}
+            <a href="https://bloax.xyz" className="underline dark:text-light">
+              SteveBloX
+            </a>
+          </p>
           <Button
             type="dashed"
-            onClick={() => {
-              // reload page
-              window.location.reload();
+            onClick={() => setExpandedGradientPreview(!expandedGradientPreview)}
+            className="expandGradientButton"
+            size="large"
+            style={{
+              bottom: !expandedGradientPreview ? ".8rem" : "8.4rem",
             }}
           >
-            <TextWithIcon text="New" icon={<PlusCircleFilled />} />
+            <TextWithIcon
+              text={expandedGradientPreview ? "Collapse" : "Expand"}
+              icon={
+                expandedGradientPreview ? (
+                  <CaretDownFilled />
+                ) : (
+                  <CaretUpFilled />
+                )
+              }
+              reverse={true}
+            />
           </Button>
-        </>
-      )}
-      <div className="gradientBar mt-5">
-        <div
-          className="gradient h-2"
-          style={{
-            background: `linear-gradient(to right, ${gradient.join(", ")})`,
-          }}
-        ></div>
+          {/*<FormatTest />*/}
+        </div>
       </div>
-      <FloatButton
-        onClick={() => setStorageDrawerVisible(true)}
-        icon={<SaveFilled />}
-      />
-      <SavedUsernamesDrawer
-        open={storageDrawerVisible}
-        setOpen={setStorageDrawerVisible}
-        onLoad={(id) => {
-          const {
-            username,
-            startColor,
-            middleColor,
-            middleColorEnabled,
-            endColor,
-          } = JSON.parse(localStorage.getItem(id) || "{}");
-          setMiddleColorEnabled(middleColorEnabled);
-          setMiddleColor(middleColor);
-          setStartColor(startColor);
-          setEndColor(endColor);
-          setUsername(username);
-          setStorageNanoid(id);
-          setStorageDrawerVisible(false);
-        }}
-        messageApi={messageApi}
-      />
-      <p className="text-sm text-gray-500 italic">
-        Made with React by <a href="https://bloax.xyz">SteveBloX</a>
-      </p>
-    </div>
+    </ConfigProvider>
   );
 }
 

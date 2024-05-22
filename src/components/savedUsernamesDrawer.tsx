@@ -6,11 +6,13 @@ function SavedUsernamesDrawer({
   setOpen,
   onLoad,
   messageApi,
+  onDelete_,
 }: {
   open: boolean;
   setOpen: (open: boolean) => void;
   onLoad: (id: string) => void;
   messageApi: any;
+  onDelete_: (id: string) => void;
 }) {
   function getAllLocalStorage() {
     var values = [],
@@ -31,6 +33,7 @@ function SavedUsernamesDrawer({
     localStorage.removeItem(id);
     messageApi.success("Username deleted");
     setOpen(false);
+    onDelete_(id);
   }
 
   return (
