@@ -334,7 +334,11 @@ function App() {
           />
           <p className="text-sm text-gray-500 italic dark:text-light mt-4">
             Made with React by{" "}
-            <a href="https://bloax.xyz" className="underline dark:text-light">
+            <a
+              href="https://bloax.xyz"
+              className="underline dark:text-light"
+              target="_blank"
+            >
               SteveBloX
             </a>
           </p>
