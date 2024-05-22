@@ -15,8 +15,6 @@ import {
 import { generateGradient, shortenHex } from "./colors";
 import HorizontalColorPicker from "./components/horizontalColorPicker";
 import {
-  CaretDownFilled,
-  CaretUpFilled,
   CopyFilled,
   DeleteFilled,
   MoonFilled,
@@ -155,8 +153,6 @@ function App() {
     );
   });*/
 
-  const [expandedGradientPreview, setExpandedGradientPreview] =
-    React.useState<boolean>(false);
   const [darkMode, setDarkMode] = React.useState<boolean>(
     localStorage.getItem("darkMode") === "true"
   );
@@ -217,6 +213,12 @@ function App() {
           >
             Enable middle color
           </Checkbox>
+          <div
+            className="gradientPrev rounded-full w-full h-2 mt-4"
+            style={{
+              background: `linear-gradient(to right, ${gradient.join(", ")})`,
+            }}
+          />
           <Divider plain>Result</Divider>
           <p className="text-lg dark:text-light">Preview</p>
           <div className="font-bold mb-3">
@@ -293,15 +295,6 @@ function App() {
               </Button>
             </>
           )}
-          <div className="gradientBar mt-5">
-            <div
-              className="gradient h-2"
-              style={{
-                background: `linear-gradient(to right, ${gradient.join(", ")})`,
-                ...(expandedGradientPreview ? { height: "8rem" } : {}),
-              }}
-            ></div>
-          </div>
           <FloatButton.Group shape="square">
             <FloatButton
               icon={darkMode ? <MoonOutlined /> : <MoonFilled />}
@@ -339,33 +332,12 @@ function App() {
               }
             }}
           />
-          <p className="text-sm text-gray-500 italic dark:text-light">
+          <p className="text-sm text-gray-500 italic dark:text-light mt-4">
             Made with React by{" "}
             <a href="https://bloax.xyz" className="underline dark:text-light">
               SteveBloX
             </a>
           </p>
-          <Button
-            type="dashed"
-            onClick={() => setExpandedGradientPreview(!expandedGradientPreview)}
-            className="expandGradientButton"
-            size="large"
-            style={{
-              bottom: !expandedGradientPreview ? ".8rem" : "8.4rem",
-            }}
-          >
-            <TextWithIcon
-              text={expandedGradientPreview ? "Collapse" : "Expand"}
-              icon={
-                expandedGradientPreview ? (
-                  <CaretDownFilled />
-                ) : (
-                  <CaretUpFilled />
-                )
-              }
-              reverse={true}
-            />
-          </Button>
           {/*<FormatTest />*/}
         </div>
       </div>

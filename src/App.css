@@ -23,20 +23,6 @@ body {
   background: #fff;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
-.gradient {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  transition: .5s all;
-}
-
-.expandGradientButton {
-  position: fixed;
-  bottom: .8rem;
-  left: .4rem;
-  transition: .5s all;
-}
 
 .app {
   display: flex;
