@@ -26,6 +26,7 @@ import TextWithIcon from "./components/textWithIcon";
 import { nanoid } from "nanoid";
 import SavedUsernamesDrawer from "./components/savedUsernamesDrawer";
 import GradientUsername from "./components/gradientUsername";
+import IconsButton from "./components/iconsButton";
 
 function App() {
   const [messageApi, contextHolder] = message.useMessage();
@@ -40,6 +41,8 @@ function App() {
   const [endColor, setEndColor] = React.useState<string>("#69B1FF");
   const [gradient, setGradient] = React.useState<string[]>([]);
   const [storageNanoid, setStorageNanoid] = React.useState<string>("");
+  const [lastUsernameInputCursor, setLastUsernameInputCursor] =
+    React.useState<number>(0);
   useEffect(() => {
     const minLen = middleColorEnabled ? 3 : 2;
     if (!username) {
@@ -176,34 +179,55 @@ function App() {
           <p className="text-gray-500 text-sm mb-0.5 dark:text-light">
             Nickname
           </p>
-          <Input
-            status={username.length === 0 ? "error" : ""}
-            placeholder="meow"
-            count={{
-              show: true,
-            }}
-            onChange={(e) => setUsername(e.target.value)}
-            value={username}
-          />
+          <div className="flex justify-between">
+            <Input
+              status={username.length === 0 ? "error" : ""}
+              placeholder="meow"
+              count={{
+                show: true,
+              }}
+              onChange={(e) => setUsername(e.target.value)}
+              value={username}
+              className="mr-2 fa-input"
+              onBlur={(e) => {
+                setLastUsernameInputCursor(
+                  e.target.selectionStart !== null
+                    ? e.target.selectionStart
+                    : username.length
+                );
+              }}
+            />
+            <IconsButton
+              onIconSelect={(icon) => {
+                setUsername(
+                  username.slice(0, lastUsernameInputCursor) +
+                    String.fromCharCode(
+                      parseInt(icon.unicode.toUpperCase(), 16)
+                    ) +
+                    username.slice(lastUsernameInputCursor)
+                );
+              }}
+            />
+          </div>
           <Divider plain>Colors</Divider>
           <div className="mb-1 flex justify-between">
             <HorizontalColorPicker
               showText={() => "Start color"}
               value={startColor}
-              onChange={(c) => setStartColor(c.toHex())}
+              onChangeComplete={(c) => setStartColor(c.toHex())}
               disabledAlpha
             />
             <HorizontalColorPicker
               showText={() => "Middle color"}
               value={middleColor}
-              onChange={(c) => setMiddleColor(c.toHex())}
+              onChangeComplete={(c) => setMiddleColor(c.toHex())}
               disabledAlpha
               disabled={!middleColorEnabled}
             />
             <HorizontalColorPicker
               showText={() => "End color"}
               value={endColor}
-              onChange={(c) => setEndColor(c.toHex())}
+              onChangeComplete={(c) => setEndColor(c.toHex())}
               disabledAlpha
             />
           </div>
@@ -221,7 +245,7 @@ function App() {
           />
           <Divider plain>Result</Divider>
           <p className="text-lg dark:text-light">Preview</p>
-          <div className="font-bold mb-3">
+          <div className="font-bold mb-3 fa-font">
             {gradient
               .slice(0, username ? username.length : defaultUsername.length)
               .map((color, i) => (
@@ -242,6 +266,7 @@ function App() {
                   cursor: "all",
                 })
               }
+              className="fa-input"
             />
             <Button
               type="primary"
@@ -305,7 +330,6 @@ function App() {
               icon={<SaveFilled />}
             />
           </FloatButton.Group>
-
           <SavedUsernamesDrawer
             open={storageDrawerVisible}
             setOpen={setStorageDrawerVisible}
@@ -338,6 +362,7 @@ function App() {
               href="https://bloax.xyz"
               className="underline dark:text-light"
               target="_blank"
+              rel="noreferrer"
             >
               SteveBloX
             </a>

@@ -8,7 +8,7 @@ export default function GradientUsername({
   className?: string;
 }) {
   return (
-    <span className={"font-bold" + className}>
+    <span className={"fa-font font-bold " + className}>
       {gradient.map((color, i) => (
         <span style={{ color }} key={i}>
           {username[i]}

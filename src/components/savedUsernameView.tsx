@@ -26,14 +26,10 @@ export default function SavedUsernameView({
 
   return (
     <>
-      <p className="font-bold text-xl mb-4">
-        {gradient.map((color, i) => (
-          <span style={{ color }} key={i}>
-            {username[i]}
-          </span>
-        ))}
-      </p>
-      <div className="mb-3">
+      <span className="text-xl">
+        <GradientUsername username={username} gradient={gradient} />
+      </span>
+      <div className="mb-3 mt-2">
         <ColorPicker
           disabled
           value={startColor}
