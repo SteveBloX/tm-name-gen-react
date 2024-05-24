@@ -6,6 +6,11 @@
   font-weight: 900;
 }
 
+@font-face {
+  font-family: "Kenney";
+  src: url("./fonts/kenney-icon-font.ttf") format("truetype");
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

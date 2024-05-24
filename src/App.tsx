@@ -42,7 +42,7 @@ function App() {
   const [gradient, setGradient] = React.useState<string[]>([]);
   const [storageNanoid, setStorageNanoid] = React.useState<string>("");
   const [lastUsernameInputCursor, setLastUsernameInputCursor] =
-    React.useState<number>(0);
+    React.useState<number>(NaN);
   useEffect(() => {
     const minLen = middleColorEnabled ? 3 : 2;
     if (!username) {
@@ -193,18 +193,28 @@ function App() {
                 setLastUsernameInputCursor(
                   e.target.selectionStart !== null
                     ? e.target.selectionStart
-                    : username.length
+                    : NaN
                 );
               }}
             />
             <IconsButton
               onIconSelect={(icon) => {
+                const usern = username ? username : defaultUsername;
                 setUsername(
-                  username.slice(0, lastUsernameInputCursor) +
+                  usern.slice(
+                    0,
+                    isNaN(lastUsernameInputCursor)
+                      ? usern.length
+                      : lastUsernameInputCursor
+                  ) +
                     String.fromCharCode(
                       parseInt(icon.unicode.toUpperCase(), 16)
                     ) +
-                    username.slice(lastUsernameInputCursor)
+                    usern.slice(
+                      isNaN(lastUsernameInputCursor)
+                        ? usern.length
+                        : lastUsernameInputCursor
+                    )
                 );
               }}
             />
