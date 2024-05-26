@@ -1,9 +1,12 @@
 import { generateGradient } from "../colors";
 import React from "react";
 import { Button, ColorPicker, Popconfirm } from "antd";
-import TextWithIcon from "./textWithIcon";
-import { DeleteFilled, DownloadOutlined } from "@ant-design/icons";
 import GradientUsername from "./gradientUsername";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faDownload, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+library.add(faDownload, faTrash);
 
 export default function SavedUsernameView({
   id,
@@ -50,8 +53,13 @@ export default function SavedUsernameView({
           showText={(c) => `#${c.toHex()}`}
         />
       </div>
-      <Button onClick={() => onLoad(id)} type="primary" className="mr-3">
-        <TextWithIcon text="Load" icon={<DownloadOutlined />} />
+      <Button
+        onClick={() => onLoad(id)}
+        type="primary"
+        className="mr-3"
+        icon={<FontAwesomeIcon icon={faDownload} />}
+      >
+        Load
       </Button>
       <Popconfirm
         title="Delete nickname?"
@@ -68,8 +76,13 @@ export default function SavedUsernameView({
         okText="Yes"
         cancelText="No"
       >
-        <Button type="dashed" className="mr-3" danger>
-          <TextWithIcon text="Delete" icon={<DeleteFilled />} />
+        <Button
+          type="dashed"
+          className="mr-3"
+          danger
+          icon={<FontAwesomeIcon icon={faTrash} />}
+        >
+          Delete
         </Button>
       </Popconfirm>
     </>

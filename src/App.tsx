@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import {
   Button,
@@ -12,21 +12,28 @@ import {
   Space,
   theme,
 } from "antd";
-import { generateGradient, shortenHex } from "./colors";
+import { generateGradient, randomHue, shortenHex } from "./colors";
 import HorizontalColorPicker from "./components/horizontalColorPicker";
-import {
-  CopyFilled,
-  DeleteFilled,
-  MoonFilled,
-  MoonOutlined,
-  PlusCircleFilled,
-  SaveFilled,
-} from "@ant-design/icons";
-import TextWithIcon from "./components/textWithIcon";
 import { nanoid } from "nanoid";
 import SavedUsernamesDrawer from "./components/savedUsernamesDrawer";
 import GradientUsername from "./components/gradientUsername";
 import IconsButton from "./components/iconsButton";
+import ShadesContext from "./components/shadesContext";
+import {
+  faCopy,
+  faDatabase,
+  faDice,
+  faMoon,
+  faPlus,
+  faSave,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Values from "values.js";
+import { randomInRange } from "./utils";
+
+library.add(faCopy, faSave, faDatabase, faTrash, faPlus, faMoon, faDice);
 
 function App() {
   const [messageApi, contextHolder] = message.useMessage();
@@ -164,6 +171,9 @@ function App() {
     setDarkMode(!darkMode);
     localStorage.setItem("darkMode", (!darkMode).toString());
   }
+
+  const [middleColorRandomWarning, setMiddleColorRandomWarning] =
+    useState<boolean>(false);
   return (
     <ConfigProvider
       theme={{
@@ -244,9 +254,51 @@ function App() {
           <Checkbox
             onChange={(e) => setMiddleColorEnabled(e.target.checked)}
             checked={middleColorEnabled}
+            className="mb-2"
           >
             Enable middle color
           </Checkbox>
+          <br />
+          <div className="flex">
+            <Button
+              type="default"
+              icon={<FontAwesomeIcon icon={faDice} />}
+              iconPosition="end"
+              className="mr-2"
+              onClick={() => {
+                const color = randomHue();
+                const col = new Values(color);
+                const colors = col
+                  .all(21)
+                  .map((c) => c.hexString())
+                  .filter((c) => c !== color);
+                const midColor = colors[randomInRange(0, colors.length - 1)];
+                const ndColor = colors[randomInRange(0, colors.length - 1)];
+                setStartColor(color);
+                if (middleColorEnabled) {
+                  setMiddleColor(midColor);
+                  if (!middleColorRandomWarning) {
+                    messageApi.warning(
+                      "Middle color may not look good with random colors",
+                      5
+                    );
+                    setMiddleColorRandomWarning(true);
+                  }
+                }
+                setEndColor(ndColor);
+              }}
+            >
+              Randomize
+            </Button>
+            <ShadesContext
+              setStartColor={setStartColor}
+              setMiddleColor={(c) => {
+                setMiddleColor(c);
+                setMiddleColorEnabled(true);
+              }}
+              setEndColor={setEndColor}
+            />
+          </div>
           <div
             className="gradientPrev rounded-full w-full h-2 mt-4"
             style={{
@@ -255,7 +307,7 @@ function App() {
           />
           <Divider plain>Result</Divider>
           <p className="text-lg dark:text-light">Preview</p>
-          <div className="font-bold mb-3 fa-font">
+          <div className="font-bold mb-3 fa-font-bold">
             {gradient
               .slice(0, username ? username.length : defaultUsername.length)
               .map((color, i) => (
@@ -285,17 +337,21 @@ function App() {
                   .writeText(tmCode)
                   .then(() => messageApi.success("Copied to clipboard"));
               }}
+              icon={<FontAwesomeIcon icon={faCopy} />}
+              iconPosition="end"
             >
-              <TextWithIcon text="Copy" icon={<CopyFilled />} reverse={false} />
+              Copy
             </Button>
           </Space.Compact>
           <Divider plain>Storage</Divider>
-          <Button type="dashed" onClick={save} className="mr-3">
-            <TextWithIcon
-              text={storageNanoid ? "Update" : "Save"}
-              icon={<SaveFilled />}
-              reverse={true}
-            />
+          <Button
+            type="dashed"
+            onClick={save}
+            className="mr-3"
+            icon={<FontAwesomeIcon icon={faSave} />}
+            iconPosition="start"
+          >
+            {storageNanoid ? "Update" : "Save"}
           </Button>
           {storageNanoid && (
             <>
@@ -315,8 +371,13 @@ function App() {
                 okText="Yes"
                 cancelText="No"
               >
-                <Button type="dashed" className="mr-3" danger>
-                  <TextWithIcon text="Delete" icon={<DeleteFilled />} />
+                <Button
+                  type="dashed"
+                  className="mr-3"
+                  danger
+                  icon={<FontAwesomeIcon icon={faTrash} />}
+                >
+                  Delete
                 </Button>
               </Popconfirm>
               <Button
@@ -325,19 +386,26 @@ function App() {
                   // reload page
                   window.location.reload();
                 }}
+                icon={<FontAwesomeIcon icon={faPlus} />}
               >
-                <TextWithIcon text="New" icon={<PlusCircleFilled />} />
+                New
               </Button>
             </>
           )}
           <FloatButton.Group shape="square">
             <FloatButton
-              icon={darkMode ? <MoonOutlined /> : <MoonFilled />}
+              icon={
+                darkMode ? (
+                  <FontAwesomeIcon icon={faMoon} />
+                ) : (
+                  <FontAwesomeIcon icon={faMoon} />
+                )
+              }
               onClick={toggleDarkMode}
             />
             <FloatButton
               onClick={() => setStorageDrawerVisible(true)}
-              icon={<SaveFilled />}
+              icon={<FontAwesomeIcon icon={faDatabase} />}
             />
           </FloatButton.Group>
           <SavedUsernamesDrawer
@@ -377,6 +445,7 @@ function App() {
               SteveBloX
             </a>
           </p>
+
           {/*<FormatTest />*/}
         </div>
       </div>

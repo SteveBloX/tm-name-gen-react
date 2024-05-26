@@ -11,6 +11,17 @@
   src: url("./fonts/kenney-icon-font.ttf") format("truetype");
 }
 
+@font-face {
+  font-family: "MontAwesome5";
+  src: url("./fonts/montserrat-fa5.ttf") format("truetype")
+}
+
+@font-face {
+  font-family: "MontAwesome5Bold";
+  src: url("./fonts/Montserrat-Bold-FA5.ttf") format("truetype")
+}
+
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -54,5 +65,9 @@ body {
 }
 
 .fa-input input, input.fa-input, .fa-font {
-  font-family: "FA5", "Montserrat", sans-serif;
+  font-family: "MontAwesome5", "Montserrat", sans-serif;
+}
+
+.fa-input-bold input, input.fa-input-bold, .fa-font-bold {
+  font-family: "MontAwesome5Bold", "Montserrat", sans-serif;
 }

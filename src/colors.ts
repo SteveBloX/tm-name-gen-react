@@ -1,3 +1,26 @@
+// Generate a random hex color
+import { randomInRange } from "./utils";
+
+function randomHue() {
+  const h = Math.floor(Math.random() * 360);
+  const s = randomInRange(50, 100);
+  const l = randomInRange(25, 50);
+  return hslToHex(h, s, l);
+}
+
+function hslToHex(h: number, s: number, l: number) {
+  l /= 100;
+  const a = (s * Math.min(l, 1 - l)) / 100;
+  const f = (n: number) => {
+    const k = (n + h / 30) % 12;
+    const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+    return Math.round(255 * color)
+        .toString(16)
+        .padStart(2, "0"); // convert to Hex and prefix "0" if needed
+  };
+  return `#${f(0)}${f(8)}${f(4)}`;
+}
+
 // Convert hex to RGB
 function hexToRgb(hex: string) {
   hex = hex.replace("#", "");
@@ -77,4 +100,11 @@ function shortenHex(hex: string) {
   return `#${r}${g}${b}`.toUpperCase();
 }
 
-export { generateGradient, shortenHex, rgbToHex, hexToRgb };
+export {
+  generateGradient,
+  shortenHex,
+  rgbToHex,
+  hexToRgb,
+  randomHue,
+  hslToHex,
+};

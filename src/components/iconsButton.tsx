@@ -30,7 +30,7 @@ export default function IconsButton({
               <FontAwesomeIcon
                 icon={ic}
                 key={icon.unicode}
-                style={{ margin: "5px" }}
+                style={{ margin: "5px", cursor: "pointer" }}
                 onClick={() => onIconSelect(icon)}
               />
             );
