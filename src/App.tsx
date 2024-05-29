@@ -12,12 +12,16 @@ import {
   Space,
   theme,
 } from "antd";
-import { generateGradient, randomHue, shortenHex } from "./colors";
+import {
+  applyColorsToHTMLString,
+  generateGradient,
+  randomHue,
+  shortenHex,
+} from "./colors";
 import HorizontalColorPicker from "./components/horizontalColorPicker";
 import { nanoid } from "nanoid";
 import SavedUsernamesDrawer from "./components/savedUsernamesDrawer";
 import GradientUsername from "./components/gradientUsername";
-import IconsButton from "./components/iconsButton";
 import ShadesContext from "./components/shadesContext";
 import {
   faCopy,
@@ -32,6 +36,7 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Values from "values.js";
 import { randomInRange } from "./utils";
+import FormatEditor from "./components/formatEditor";
 
 library.add(faCopy, faSave, faDatabase, faTrash, faPlus, faMoon, faDice);
 
@@ -50,6 +55,10 @@ function App() {
   const [storageNanoid, setStorageNanoid] = React.useState<string>("");
   const [lastUsernameInputCursor, setLastUsernameInputCursor] =
     React.useState<number>(NaN);
+
+  const [usernameHTML, setUsernameHTML] = useState(defaultUsername);
+  const usernameText = usernameHTML.replace(/<[^>]*>/g, "");
+  const previewHTML = applyColorsToHTMLString(gradient, usernameHTML);
   useEffect(() => {
     const minLen = middleColorEnabled ? 3 : 2;
     if (!username) {
@@ -59,7 +68,7 @@ function App() {
           middleColor,
           middleColorEnabled,
           endColor,
-          defaultUsername.length
+          usernameText.length
         )
       );
     } else if (username.length <= minLen)
@@ -79,20 +88,30 @@ function App() {
           middleColor,
           middleColorEnabled,
           endColor,
-          username.length
+          usernameText.length
         )
       );
-  }, [username, startColor, middleColor, middleColorEnabled, endColor]);
+  }, [usernameText, startColor, middleColor, middleColorEnabled, endColor]);
 
-  const tmCode = gradient
-    .slice(0, username ? username.length : defaultUsername.length)
-    .map(
-      (c, i) =>
-        `$${c.replace("#", "")}${username ? username[i] : defaultUsername[i]}`
-    )
-    .join("");
+  function genCode() {
+    let cd = previewHTML
+      .replaceAll(/<b style="font-weight: italic;">(.*?)<\/b>/g, "$o$i$1$i$o")
+      .replaceAll(/<i style="font-weight: bold;">(.*?)<\/i>/g, "$i$o$1$o$i")
+      .replaceAll(/<b style="">(.*?)<\/b>/g, "$o1$o")
+      .replaceAll(/<i style="">(.*?)<\/i>/g, "$i1$i")
+      .replaceAll(/<b>(.*?)<\/b>/g, "$o$1$o")
+      .replaceAll(/<i>(.*?)<\/i>/g, "$i$1$i");
 
-  const tmCodeRef = React.useRef<any>(null);
+    const spanRegex = /<span style="color: #([0-9A-F]{3,6})">([^<]+)<\/span>/g;
+    cd = cd.replaceAll(
+      spanRegex,
+      (_: any, color: string, char: string) => `$${color}${char}`
+    );
+    console.log("code", cd);
+    return cd;
+  }
+
+  const tmCode = genCode();
 
   function save() {
     if (username.length < 2) {
@@ -132,37 +151,6 @@ function App() {
   const [storageDrawerVisible, setStorageDrawerVisible] =
     React.useState<boolean>(false);
 
-  /*useEffect(() => {
-    console.log("Added event listener");
-    window.addEventListener(
-      "beforeunload",
-      (e) => {
-        if (storageNanoid) {
-          const storageData = JSON.parse(
-            localStorage.getItem(storageNanoid) || "{}"
-          );
-          if (
-            storageData.username !== username ||
-            storageData.startColor !== startColor ||
-            storageData.middleColor !== middleColor ||
-            storageData.middleColorEnabled !== middleColorEnabled ||
-            storageData.endColor !== endColor
-          ) {
-            console.log("Saved data is different");
-            return "You have unsaved changes. Are you sure you want to leave?";
-          }
-        } else {
-          if (username !== defaultUsername) {
-            console.log("Username is different");
-            e.preventDefault();
-            return (e.returnValue = "");
-          }
-        }
-      },
-      { capture: true }
-    );
-  });*/
-
   const [darkMode, setDarkMode] = React.useState<boolean>(
     localStorage.getItem("darkMode") === "true"
   );
@@ -174,6 +162,7 @@ function App() {
 
   const [middleColorRandomWarning, setMiddleColorRandomWarning] =
     useState<boolean>(false);
+
   return (
     <ConfigProvider
       theme={{
@@ -190,9 +179,16 @@ function App() {
             Nickname
           </p>
           <div className="flex justify-between">
-            <Input
+            <FormatEditor
+              colors={gradient}
+              usernameHTML={usernameHTML}
+              setUsernameHTML={setUsernameHTML}
+              usernameText={usernameText}
+              previewHTML={previewHTML}
+              defaultUsername={defaultUsername}
+            />
+            {/*<Input
               status={username.length === 0 ? "error" : ""}
-              placeholder="meow"
               count={{
                 show: true,
               }}
@@ -206,28 +202,7 @@ function App() {
                     : NaN
                 );
               }}
-            />
-            <IconsButton
-              onIconSelect={(icon) => {
-                const usern = username ? username : defaultUsername;
-                setUsername(
-                  usern.slice(
-                    0,
-                    isNaN(lastUsernameInputCursor)
-                      ? usern.length
-                      : lastUsernameInputCursor
-                  ) +
-                    String.fromCharCode(
-                      parseInt(icon.unicode.toUpperCase(), 16)
-                    ) +
-                    usern.slice(
-                      isNaN(lastUsernameInputCursor)
-                        ? usern.length
-                        : lastUsernameInputCursor
-                    )
-                );
-              }}
-            />
+            />*/}
           </div>
           <Divider plain>Colors</Divider>
           <div className="mb-1 flex justify-between">
@@ -307,29 +282,15 @@ function App() {
           />
           <Divider plain>Result</Divider>
           <p className="text-lg dark:text-light">Preview</p>
-          <div className="font-bold mb-3 fa-font-bold">
-            {gradient
-              .slice(0, username ? username.length : defaultUsername.length)
-              .map((color, i) => (
-                <span style={{ color }} key={i}>
-                  {username ? username[i] : defaultUsername[i]}
-                </span>
-              ))}
-          </div>
+          <div
+            className="mb-3 fa-font-bold preview"
+            dangerouslySetInnerHTML={{
+              __html: previewHTML,
+            }}
+          ></div>
           <p className="text-lg mb-1 dark:text-light">Trackmania Code</p>
           <Space.Compact>
-            <Input
-              readOnly
-              value={tmCode}
-              ref={tmCodeRef}
-              // select all text on focus
-              onFocus={(e) =>
-                tmCodeRef.current.focus({
-                  cursor: "all",
-                })
-              }
-              className="fa-input"
-            />
+            <Input readOnly value={tmCode} className="fa-input" />
             <Button
               type="primary"
               onClick={() => {
@@ -423,7 +384,7 @@ function App() {
               setMiddleColor(middleColor);
               setStartColor(startColor);
               setEndColor(endColor);
-              setUsername(username);
+              setUsernameHTML(username);
               setStorageNanoid(id);
               setStorageDrawerVisible(false);
             }}
@@ -445,7 +406,6 @@ function App() {
               SteveBloX
             </a>
           </p>
-
           {/*<FormatTest />*/}
         </div>
       </div>

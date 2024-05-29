@@ -13,12 +13,20 @@
 
 @font-face {
   font-family: "MontAwesome5";
-  src: url("./fonts/montserrat-fa5.ttf") format("truetype")
+  src: url("./fonts/Montserrat-Regular-FA5.ttf") format("truetype");
+  font-weight: normal;
 }
 
 @font-face {
-  font-family: "MontAwesome5Bold";
-  src: url("./fonts/Montserrat-Bold-FA5.ttf") format("truetype")
+  font-family: "MontAwesome5";
+  src: url("./fonts/Montserrat-Bold-FA5.ttf") format("truetype");
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: "MontAwesome5";
+  src: url("./fonts/Montserrat-Black-FA5.ttf") format("truetype");
+  font-weight: 900;
 }
 
 
@@ -69,5 +77,28 @@ body {
 }
 
 .fa-input-bold input, input.fa-input-bold, .fa-font-bold {
-  font-family: "MontAwesome5Bold", "Montserrat", sans-serif;
+  font-family: "MontAwesome5", "Montserrat", sans-serif;
+  font-weight: bold;
+}
+
+
+.username-input {
+  display: flex;
+  align-items: center;
+}
+
+.username-input b {
+  vertical-align: baseline;
+  transform: translateY(-.09em);
+}
+
+.username-input {
+  border-radius: 5px;
+  border: 1px solid #d9d9d9;
+  outline: none !important;
+  transition: .1s all;
+}
+
+.username-input:hover, .username-input:focus {
+  border: 1px solid #4d90fe;
 }

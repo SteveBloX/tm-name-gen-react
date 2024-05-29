@@ -2,11 +2,11 @@ import { useState } from "react";
 import Values from "values.js";
 import { Button, ColorPicker, Dropdown, MenuProps, Popover } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDice, faDroplet } from "@fortawesome/free-solid-svg-icons";
+import { faDice, faPalette } from "@fortawesome/free-solid-svg-icons";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { randomHue } from "../colors";
 
-library.add(faDice, faDroplet);
+library.add(faDice, faPalette);
 
 export default function ShadesContext({
   setStartColor,
@@ -93,7 +93,7 @@ export default function ShadesContext({
       title="Generate shade"
       trigger="click"
     >
-      <Button iconPosition="end" icon={<FontAwesomeIcon icon={faDroplet} />}>
+      <Button iconPosition="end" icon={<FontAwesomeIcon icon={faPalette} />}>
         Shade helper
       </Button>
     </Popover>

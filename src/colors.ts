@@ -15,8 +15,8 @@ function hslToHex(h: number, s: number, l: number) {
     const k = (n + h / 30) % 12;
     const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
     return Math.round(255 * color)
-        .toString(16)
-        .padStart(2, "0"); // convert to Hex and prefix "0" if needed
+      .toString(16)
+      .padStart(2, "0"); // convert to Hex and prefix "0" if needed
   };
   return `#${f(0)}${f(8)}${f(4)}`;
 }
@@ -100,6 +100,34 @@ function shortenHex(hex: string) {
   return `#${r}${g}${b}`.toUpperCase();
 }
 
+function applyColorsToHTMLString(colors: string[], htmlstring: string) {
+  console.log(colors, htmlstring);
+  let colorIndex = 0; // To keep track of the index in the colors array
+  let result = ""; // To store the resulting string with colors
+  let isTag = false; // Flag to check if we are inside an HTML tag
+
+  for (let i = 0; i < htmlstring.length; i++) {
+    let char = htmlstring[i];
+
+    if (char === "<") {
+      isTag = true; // Entering an HTML tag
+      result += char;
+    } else if (char === ">") {
+      isTag = false; // Exiting an HTML tag
+      result += char;
+    } else if (isTag) {
+      // If inside a tag, just append the character
+      result += char;
+    } else {
+      // If not inside a tag, wrap the character with a span and apply the color
+      result += `<span style="color: ${colors[colorIndex]}">${char}</span>`;
+      colorIndex++;
+    }
+  }
+
+  return result;
+}
+
 export {
   generateGradient,
   shortenHex,
@@ -107,4 +135,5 @@ export {
   hexToRgb,
   randomHue,
   hslToHex,
+  applyColorsToHTMLString,
 };

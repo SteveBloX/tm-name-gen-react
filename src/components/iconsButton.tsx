@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconProp, library } from "@fortawesome/fontawesome-svg-core";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
-import { Button, Input, Popover } from "antd";
+import { Button, Input, Popover, Tooltip } from "antd";
 
 export default function IconsButton({
   onIconSelect,
@@ -47,9 +47,11 @@ export default function IconsButton({
         trigger="click"
         placement="bottom"
       >
-        <Button>
-          <FontAwesomeIcon icon={btnIcon} />
-        </Button>
+        <Tooltip title="Coming back soon">
+          <Button disabled={true}>
+            <FontAwesomeIcon icon={btnIcon} />
+          </Button>
+        </Tooltip>
       </Popover>
     </>
   );
